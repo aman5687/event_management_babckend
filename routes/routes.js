@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/users");
+const BookedEvent = require("../models/bookedEvent");
 const multer = require("multer");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
@@ -124,33 +125,27 @@ router.post("/login", async (req, res) => {
 });
 // ends
 
+// api to book event for the user
 
+router.post("/bookEvent", async (req, res)=>{
+    const eventName = req.body.eventName;
+    const bookedBy = req.body.bookedBy;
+    
+    const bookedEvent = await BookedEvent({
+        eventName:eventName,
+        bookedBy:bookedBy
+    });
 
-// logout api
-router.get("/logout", (req,res)=>{
-    req.session.destroy((err)=>{
-        if(err){
-            res.status(401).json({err})
-        }else{
-            res.status(200).send({message:"Successfully logged out"});
-        }
-    })
-})
-// ends
+    const booked = await bookedEvent.save();
 
-
-// api to print sessions
-router.get("/getsession", (req, res)=>{
-    const user = req.session.userInfo;
-    if(user){
-        console.log(user);
+    if(booked){
+        res.status(200).json({booked});
     }else{
-        res.status(200).json({message:"No session"});
+        res.status(401).json({message:"Event has not been booked"});
     }
 })
+
 // ends here
-
-
 
 
 
