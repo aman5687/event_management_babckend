@@ -132,9 +132,9 @@ router.post("/bookEvent", async (req, res)=>{
         const eventName = req.body.eventName;
         const bookedBy = req.body.bookedBy;
         
-        const bookedEvent = await BookedEvent({
-            eventName:eventName,
-            bookedBy:bookedBy
+        const bookedEvent = new BookedEvent({
+            eventName,
+            bookedBy
         });
     
         const booked = await bookedEvent.save();
