@@ -128,20 +128,25 @@ router.post("/login", async (req, res) => {
 // api to book event for the user
 
 router.post("/bookEvent", async (req, res)=>{
-    const eventName = req.body.eventName;
-    const bookedBy = req.body.bookedBy;
+    try {
+        const eventName = req.body.eventName;
+        const bookedBy = req.body.bookedBy;
+        
+        const bookedEvent = await BookedEvent({
+            eventName:eventName,
+            bookedBy:bookedBy
+        });
     
-    const bookedEvent = await BookedEvent({
-        eventName:eventName,
-        bookedBy:bookedBy
-    });
-
-    const booked = await bookedEvent.save();
-
-    if(booked){
-        res.status(200).json({booked});
-    }else{
-        res.status(401).json({message:"Event has not been booked"});
+        const booked = await bookedEvent.save();
+    
+        if(booked){
+            res.status(200).json({booked});
+        }else{
+            res.status(401).json({message:"Event has not been booked"});
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(401).json({error});
     }
 })
 
